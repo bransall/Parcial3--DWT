@@ -71,6 +71,19 @@
     document.querySelectorAll("[data-complete-level]").forEach((button) => {
       button.addEventListener("click", () => {
         const level = Number(button.dataset.completeLevel);
+
+        // Validación: Solo permitir completar si está desbloqueado
+        if (!window.EscapeRoomState.isLevelUnlocked(level)) {
+          showMessage(`Debes completar el nivel ${level - 1} primero.`, "warning");
+          return;
+        }
+
+        // Validación: Solo permitir si el botón está habilitado (tarea completada)
+        if (button.disabled) {
+          showMessage(`Completa todas las tareas del nivel ${level} antes de continuar.`, "warning");
+          return;
+        }
+
         window.EscapeRoomState.completeLevel(level);
         showMessage(`Nivel ${level} completado.`, "success");
         renderApp();
@@ -132,12 +145,23 @@
       const isCompleted = Boolean(state.completedLevels[level]);
       const badge = section.querySelector(".level-badge");
 
+      // Desopacify si está bloqueado
       section.classList.toggle("opacity-50", !isUnlocked);
-      section.querySelectorAll("button, input, video, canvas").forEach((element) => {
-        const shouldAutoEnable = element.dataset.autoEnable !== "false";
 
-        if (!element.matches("[data-go-level]") && (!isUnlocked || shouldAutoEnable)) {
-          element.disabled = !isUnlocked;
+      // Deshabilitar TODOS los elementos interactivos si está bloqueado
+      section.querySelectorAll("button, input, video, canvas").forEach((element) => {
+        // Excepto los botones de navegación (data-go-level) que tienen su propia lógica
+        if (!element.matches("[data-go-level]")) {
+          // Si está bloqueado, deshabilitar todo
+          if (!isUnlocked) {
+            element.disabled = true;
+          }
+          // Si está desbloqueado pero el botón es "complete-level-*", mantener su estado actual
+          // (será controlado por nivel.js cuando la tarea se complete)
+          // De lo contrario, habilitar
+          else if (!element.id.includes("complete-level")) {
+            element.disabled = false;
+          }
         }
       });
 
