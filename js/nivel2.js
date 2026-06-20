@@ -16,7 +16,7 @@
       completeBtn.addEventListener("click", function (event) {
         if (!isMapDrawn || !isPositionMarked) {
           event.preventDefault();
-          event.stopImmediatePropagation(); 
+          event.stopImmediatePropagation();
           showLevelTwoMessage("Debes dibujar el mapa y marcar la posición antes de avanzar.", "warning");
         }
       });
@@ -25,7 +25,7 @@
 
   function showLevelTwoMessage(message, type) {
     let alertDiv = document.getElementById("level2-alert");
-    
+
     if (!alertDiv) {
       alertDiv = document.createElement("div");
       alertDiv.id = "level2-alert";
@@ -64,14 +64,14 @@
 
     // 1. RECTÁNGULO (Fondo del mapa / terreno)
     ctx.fillStyle = "#e8e5dc";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, w, h);
 
     // Líneas superiores
     ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.moveTo(w / 2, 0);
+    ctx.lineTo(w / 2, h);
     ctx.lineWidth = 6;
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
@@ -107,14 +107,14 @@
     ctx.strokeStyle = "#666666";
     ctx.strokeRect(500, 310, 150, 30);
 
-    isMapDrawn = true; 
+    isMapDrawn = true;
 
     // --- 2. MARCAR LA POSICIÓN CON VÉRTICES Y COORDENADAS ---
-    
-    const safeX = 420; 
-    const safeY = 100; 
-    const safeW = 350; 
-    const safeH = 180; 
+
+    const safeX = 420;
+    const safeY = 100;
+    const safeW = 350;
+    const safeH = 180;
 
     const xPos = Math.abs((location.longitude * 10000) % safeW) + safeX;
     const yPos = Math.abs((location.latitude * 10000) % safeH) + safeY;
@@ -122,7 +122,7 @@
     // Círculo rojo
     ctx.beginPath();
     ctx.arc(xPos, yPos, 22, 0, Math.PI * 2);
-    ctx.fillStyle = "#ff0000"; 
+    ctx.fillStyle = "#ff0000";
     ctx.fill();
 
     // Vertices indicando el punto central exacto
@@ -141,19 +141,24 @@
     //fondo blanco al texto para que no se pierda con el mapa
     const textLat = `Lat: ${location.latitude}`;
     const textLng = `Lng: ${location.longitude}`;
-    
+
     ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
     ctx.fillRect(xPos + 25, yPos - 25, 120, 45);
 
+    ctx.fillStyle = "#000000";
+    ctx.fillText(textLat, xPos + 30, yPos - 5);
+    ctx.fillText(textLng, xPos + 30, yPos + 15);
+
     // Marcar en checklist: Ubicación marcada
     updateCheckItem("check-level2-marker", true);
+    isPositionMarked = true;
 
     // ---Pasar al siguiente nivel ---
     // Completamos el nivel en el estado global
     window.EscapeRoomState.completeLevel(2, {
       mapDrawn: true,
-      markedX: xMarker,
-      markedY: yMarker
+      markedX: xPos,
+      markedY: yPos
     });
 
     // Habilitar botón de completar nivel
@@ -164,7 +169,7 @@
     if (drawMapBtn) {
       drawMapBtn.textContent = "Mapa y posición listos";
       drawMapBtn.classList.replace("btn-primary", "btn-success");
-      drawMapBtn.disabled = true; 
+      drawMapBtn.disabled = true;
     }
 
     // Scrollear automáticamente al nivel 3
