@@ -15,6 +15,12 @@
   // FUNCIÓN: Iniciar acceso a la cámara
   // ========================================================================
   function iniciarCamara() {
+    // Validar que Nivel 2 esté completado
+    if (!window.EscapeRoomState.isLevelCompleted(2)) {
+      showCameraAlert('❌ Debes completar el Nivel 2 primero para acceder a la cámara.', 'danger');
+      return;
+    }
+
     try {
       videoElement = document.getElementById('camera-video');
       canvasElement = document.getElementById('photo-canvas');
@@ -223,16 +229,24 @@
   }
 
   // ========================================================================
+  // FUNCIÓN: Renderizar estado del Nivel 3
+  // ========================================================================
+  function renderNivel3() {
+    if (window.EscapeRoomState.isLevelCompleted(2)) {
+      showCameraAlert('✅ Cámara lista. Haz clic en "Activar cámara" para comenzar.', 'info');
+      cargarFotoGuardada();
+    } else {
+      showCameraAlert('⏳ Completa el Nivel 2 primero para acceder a la cámara.', 'warning');
+    }
+  }
+
+  // ========================================================================
   // EVENTO: Cuando el DOM está listo
   // ========================================================================
   document.addEventListener('DOMContentLoaded', function() {
     console.log('📌 Iniciando Nivel 3: La Evidencia del Explorador');
 
-    if (!window.EscapeRoomState.isLevelCompleted(2)) {
-      showCameraAlert('❌ Debes completar el Nivel 2 primero antes de acceder al Nivel 3', 'danger');
-      return;
-    }
-
+    // SIEMPRE adjuntar listeners (sin depender de validación de estado)
     const startCameraBtn = document.getElementById('start-camera-btn');
     const capturePhotoBtn = document.getElementById('capture-photo-btn');
 
@@ -245,10 +259,16 @@
       capturePhotoBtn.disabled = true;
     }
 
-    cargarFotoGuardada();
+    // Renderizar estado inicial
+    renderNivel3();
 
     console.log('✅ Nivel 3 inicializado correctamente');
   });
+
+  // ========================================================================
+  // EVENTO: Cuando el estado del juego cambia
+  // ========================================================================
+  window.addEventListener('escapeRoom:statechange', renderNivel3);
 
   // ========================================================================
   // EVENTO: Limpiar recursos al cerrar página
