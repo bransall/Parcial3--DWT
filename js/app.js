@@ -94,12 +94,25 @@
 
     if (resetButton) {
       resetButton.addEventListener("click", () => {
-        const shouldReset = confirm("Deseas reiniciar el progreso del escape room?");
+        const shouldReset = confirm("¿Deseas reiniciar completamente el progreso del escape room?\n\nSe limpiarán TODOS los datos y la página se recargará.");
 
         if (shouldReset) {
+          // Limpiar estado del escape room
           window.EscapeRoomState.reset();
-          showMessage("Progreso reiniciado.", "info");
-          scrollToLevel(1);
+
+          // Limpiar localStorage completamente
+          localStorage.clear();
+
+          // Limpiar sessionStorage
+          sessionStorage.clear();
+
+          // Mostrar mensaje
+          showMessage("Progreso reiniciado completamente. Recargando página...", "info");
+
+          // Recargar página después de 1 segundo
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         }
       });
     }
