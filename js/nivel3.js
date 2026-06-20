@@ -1,10 +1,3 @@
-// ============================================================================
-// NIVEL 3: LA EVIDENCIA DEL EXPLORADOR (20%)
-// ============================================================================
-// Requisitos: Acceder a cámara, mostrar video en tiempo real, capturar foto,
-// guardar en estado, manejo de errores, y verificar Nivel 2 completado.
-// ============================================================================
-
 (function () {
   let streamActivo = null;
   let videoElement = null;

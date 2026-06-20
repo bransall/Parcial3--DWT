@@ -121,6 +121,10 @@
         </div>
         <div class="card-body">
           <p>Genera 20,000 datos de sensores, los procesa con Worker y muestra estadisticas completas.</p>
+          <ul id="level4-checklist" class="list-unstyled mb-3">
+            <li class="mb-2"><span id="check-level4-datos" class="badge bg-secondary me-2">○</span>20,000 datos generados</li>
+            <li class="mb-2"><span id="check-level4-stats" class="badge bg-secondary me-2">○</span>Estadísticas calculadas</li>
+          </ul>
           <div class="progress mb-3" role="progressbar" aria-label="Progreso nivel 4">
             <div id="level4-progress-bar" class="progress-bar progress-bar-striped" style="width: 0%">0%</div>
           </div>
@@ -129,7 +133,7 @@
           </div>
           <div class="mt-3 d-flex gap-2 flex-wrap">
             <button id="process-level4-btn" class="btn btn-primary" type="button">Procesar sensores</button>
-            <button class="btn btn-success complete-level-btn" type="button" data-complete-level="4">Marcar nivel 4 completo</button>
+            <button id="complete-level4-btn" class="btn btn-success complete-level-btn" type="button" data-complete-level="4" disabled>Marcar nivel 4 completo</button>
           </div>
         </div>
       </article>
