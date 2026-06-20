@@ -40,9 +40,9 @@
     ctx.clearRect(0, 0, width, height);
 
     //---Dibujar un mapa simplificado usando figuras ---
-    
+
     // 1. RECTÁNGULO (Fondo del mapa / terreno)
-    ctx.fillStyle = "#e8e5dc"; 
+    ctx.fillStyle = "#e8e5dc";
     ctx.fillRect(0, 0, width, height);
 
     // 2. LÍNEA (Representando una carretera o ruta principal)
@@ -52,8 +52,11 @@
     ctx.moveTo(width / 2, 0);
     ctx.lineTo(width / 2, height);
     ctx.lineWidth = 6;
-    ctx.strokeStyle = "#ffffff"; 
+    ctx.strokeStyle = "#ffffff";
     ctx.stroke();
+
+    // Marcar en checklist: Mapa dibujado
+    updateCheckItem("check-level2-map", true);
 
     // 3. CÍRCULO (Representando una zona de interés o radar)
     ctx.beginPath();
@@ -86,13 +89,19 @@
     ctx.font = "bold 14px Arial";
     ctx.fillText(`📍 (${lat}, ${lng})`, xMarker + 12, yMarker + 5);
 
+    // Marcar en checklist: Ubicación marcada
+    updateCheckItem("check-level2-marker", true);
+
     // ---Pasar al siguiente nivel ---
     // Completamos el nivel en el estado global
-    window.EscapeRoomState.completeLevel(2, { 
-      mapDrawn: true, 
-      markedX: xMarker, 
-      markedY: yMarker 
+    window.EscapeRoomState.completeLevel(2, {
+      mapDrawn: true,
+      markedX: xMarker,
+      markedY: yMarker
     });
+
+    // Habilitar botón de completar nivel
+    enableCompleteButton("complete-level2-btn");
 
     // Actualizamos la interfaz del botón para dar feedback
     const drawMapBtn = document.getElementById("draw-map-btn");
@@ -101,18 +110,28 @@
       drawMapBtn.classList.replace("btn-primary", "btn-success");
     }
 
-    const completeBtn = document.querySelector('button[data-complete-level="2"]');
-    if (completeBtn) {
-      completeBtn.textContent = "Nivel 2 Superado";
-      completeBtn.classList.replace("btn-success", "btn-secondary");
-    }
-    
     // Scrollear automáticamente al nivel 3
     const levelThree = document.getElementById("level-3");
     if (levelThree) {
       setTimeout(() => {
         levelThree.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 800);
+    }
+  }
+
+  function updateCheckItem(checkId, completed) {
+    const checkEl = document.getElementById(checkId);
+    if (checkEl) {
+      checkEl.textContent = completed ? "✓" : "○";
+      checkEl.className = completed ? "badge bg-success me-2" : "badge bg-secondary me-2";
+    }
+  }
+
+  function enableCompleteButton(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.add("btn-success");
     }
   }
 })();

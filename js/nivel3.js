@@ -51,6 +51,7 @@
             console.log('✅ Cámara iniciada correctamente');
             showCameraAlert('✅ Cámara activa', 'success');
             document.getElementById('capture-photo-btn').disabled = false;
+            updateCheckItem('check-level3-camera', true);
           };
         })
         .catch(error => manejarErrores(error));
@@ -124,6 +125,9 @@
 
       completarNivel(datosImagen);
 
+      updateCheckItem('check-level3-photo', true);
+      enableCompleteButton('complete-level3-btn');
+
       showCameraAlert('✅ ¡Foto capturada correctamente!', 'success');
       console.log('✅ Foto guardada en estado');
 
@@ -193,6 +197,28 @@
       alert.textContent = mensaje;
       alert.className = `alert alert-${tipo}`;
       alert.style.display = 'block';
+    }
+  }
+
+  // ========================================================================
+  // FUNCIÓN: Actualizar ítem de checklist
+  // ========================================================================
+  function updateCheckItem(checkId, completed) {
+    const checkEl = document.getElementById(checkId);
+    if (checkEl) {
+      checkEl.textContent = completed ? '✓' : '○';
+      checkEl.className = completed ? 'badge bg-success me-2' : 'badge bg-secondary me-2';
+    }
+  }
+
+  // ========================================================================
+  // FUNCIÓN: Habilitar botón de completar nivel
+  // ========================================================================
+  function enableCompleteButton(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.add('btn-success');
     }
   }
 
