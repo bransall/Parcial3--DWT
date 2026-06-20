@@ -91,6 +91,14 @@
 
     setLocationOutputs(location);
     showLocationMessage(`Ubicacion obtenida correctamente. Precision aproximada: ${location.accuracy} metros.`, "success");
+
+    // Actualizar checklist
+    updateCheckItem("check-level1-location", true);
+
+    // Habilitar botón de completar nivel
+    enableCompleteButton("complete-level1-btn");
+
+    // Completar nivel en estado
     window.EscapeRoomState.completeLevel(1, { location });
     setButtonLoading(false);
     enableContinueButton();
@@ -120,6 +128,8 @@
     enableContinueButton();
 
     if (window.EscapeRoomState.isLevelCompleted(1)) {
+      updateCheckItem("check-level1-location", true);
+      enableCompleteButton("complete-level1-btn");
       showLocationMessage("Ubicacion guardada. El nivel 2 ya esta desbloqueado.", "success");
     }
   }
@@ -159,6 +169,22 @@
 
     alert.className = `alert alert-${type}`;
     alert.textContent = message;
+  }
+
+  function updateCheckItem(checkId, completed) {
+    const checkEl = document.getElementById(checkId);
+    if (checkEl) {
+      checkEl.textContent = completed ? "✓" : "○";
+      checkEl.className = completed ? "badge bg-success me-2" : "badge bg-secondary me-2";
+    }
+  }
+
+  function enableCompleteButton(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.add("btn-success");
+    }
   }
 
   function setButtonLoading(isLoading) {
