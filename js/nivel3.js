@@ -15,6 +15,12 @@
   // FUNCIÓN: Iniciar acceso a la cámara
   // ========================================================================
   function iniciarCamara() {
+    // Validar que Nivel 2 esté completado
+    if (!window.EscapeRoomState.isLevelCompleted(2)) {
+      showCameraAlert('❌ Debes completar el Nivel 2 primero para acceder a la cámara.', 'danger');
+      return;
+    }
+
     try {
       videoElement = document.getElementById('camera-video');
       canvasElement = document.getElementById('photo-canvas');
@@ -51,6 +57,7 @@
             console.log('✅ Cámara iniciada correctamente');
             showCameraAlert('✅ Cámara activa', 'success');
             document.getElementById('capture-photo-btn').disabled = false;
+            updateCheckItem('check-level3-camera', true);
           };
         })
         .catch(error => manejarErrores(error));
@@ -123,6 +130,9 @@
       }
 
       completarNivel(datosImagen);
+
+      updateCheckItem('check-level3-photo', true);
+      enableCompleteButton('complete-level3-btn');
 
       showCameraAlert('✅ ¡Foto capturada correctamente!', 'success');
       console.log('✅ Foto guardada en estado');
@@ -197,16 +207,46 @@
   }
 
   // ========================================================================
+  // FUNCIÓN: Actualizar ítem de checklist
+  // ========================================================================
+  function updateCheckItem(checkId, completed) {
+    const checkEl = document.getElementById(checkId);
+    if (checkEl) {
+      checkEl.textContent = completed ? '✓' : '○';
+      checkEl.className = completed ? 'badge bg-success me-2' : 'badge bg-secondary me-2';
+    }
+  }
+
+  // ========================================================================
+  // FUNCIÓN: Habilitar botón de completar nivel
+  // ========================================================================
+  function enableCompleteButton(buttonId) {
+    const btn = document.getElementById(buttonId);
+    if (btn) {
+      btn.disabled = false;
+      btn.classList.add('btn-success');
+    }
+  }
+
+  // ========================================================================
+  // FUNCIÓN: Renderizar estado del Nivel 3
+  // ========================================================================
+  function renderNivel3() {
+    if (window.EscapeRoomState.isLevelCompleted(2)) {
+      showCameraAlert('✅ Cámara lista. Haz clic en "Activar cámara" para comenzar.', 'info');
+      cargarFotoGuardada();
+    } else {
+      showCameraAlert('⏳ Completa el Nivel 2 primero para acceder a la cámara.', 'warning');
+    }
+  }
+
+  // ========================================================================
   // EVENTO: Cuando el DOM está listo
   // ========================================================================
   document.addEventListener('DOMContentLoaded', function() {
     console.log('📌 Iniciando Nivel 3: La Evidencia del Explorador');
 
-    if (!window.EscapeRoomState.isLevelCompleted(2)) {
-      showCameraAlert('❌ Debes completar el Nivel 2 primero antes de acceder al Nivel 3', 'danger');
-      return;
-    }
-
+    // SIEMPRE adjuntar listeners (sin depender de validación de estado)
     const startCameraBtn = document.getElementById('start-camera-btn');
     const capturePhotoBtn = document.getElementById('capture-photo-btn');
 
@@ -219,10 +259,16 @@
       capturePhotoBtn.disabled = true;
     }
 
-    cargarFotoGuardada();
+    // Renderizar estado inicial
+    renderNivel3();
 
     console.log('✅ Nivel 3 inicializado correctamente');
   });
+
+  // ========================================================================
+  // EVENTO: Cuando el estado del juego cambia
+  // ========================================================================
+  window.addEventListener('escapeRoom:statechange', renderNivel3);
 
   // ========================================================================
   // EVENTO: Limpiar recursos al cerrar página
