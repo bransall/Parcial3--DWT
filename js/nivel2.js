@@ -60,26 +60,23 @@
 
     ctx.clearRect(0, 0, w, h);
 
-    //---Dibujar un mapa simplificado usando figuras ---
-
-    // 1. RECTÁNGULO (Fondo del mapa / terreno)
-    ctx.fillStyle = "#e8e5dc";
-    ctx.fillRect(0, 0, width, height);
+    // --- 1. DIBUJAR EL MAPA SEGÚN EL DISEÑO ---
+    
+    // Fondo gris claro general
+    ctx.fillStyle = "#cccccc"; 
+    ctx.fillRect(0, 0, w, h);
 
     // Líneas superiores
     ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = "#ffffff";
+    ctx.moveTo(150, 0);
+    ctx.lineTo(300, 0);
+    ctx.moveTo(450, 0);
+    ctx.lineTo(650, 0);
+    ctx.lineWidth = 12;
+    ctx.strokeStyle = "#3b4358";
     ctx.stroke();
 
-    // Marcar en checklist: Mapa dibujado
-    updateCheckItem("check-level2-map", true);
-
-    // 3. CÍRCULO (Representando una zona de interés o radar)
+    // Línea gruesa (Pared izquierda y abajo formando la esquina)
     ctx.beginPath();
     ctx.moveTo(350, 80);
     ctx.lineTo(350, 360);
@@ -119,13 +116,13 @@
     const xPos = Math.abs((location.longitude * 10000) % safeW) + safeX;
     const yPos = Math.abs((location.latitude * 10000) % safeH) + safeY;
 
-    // Círculo rojo
+    // Círculo rojo grande
     ctx.beginPath();
     ctx.arc(xPos, yPos, 22, 0, Math.PI * 2);
     ctx.fillStyle = "#ff0000"; 
     ctx.fill();
 
-    // Vertices indicando el punto central exacto
+    // Vértices (Cruz) indicando el punto central exacto
     ctx.beginPath();
     ctx.moveTo(xPos - 35, yPos);
     ctx.lineTo(xPos + 35, yPos);
@@ -135,31 +132,29 @@
     ctx.strokeStyle = "#000000";
     ctx.stroke();
 
-    // Textos con las coordenadas de latitud y longitud
+    // Textos con las coordenadas exactas de latitud y longitud
     ctx.fillStyle = "#000000";
     ctx.font = "bold 14px Arial";
-    //fondo blanco al texto para que no se pierda con el mapa
+    // Agregamos un fondo blanco al texto para que no se pierda con el mapa
     const textLat = `Lat: ${location.latitude}`;
     const textLng = `Lng: ${location.longitude}`;
     
     ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
     ctx.fillRect(xPos + 25, yPos - 25, 120, 45);
 
-    // Marcar en checklist: Ubicación marcada
-    updateCheckItem("check-level2-marker", true);
+    ctx.fillStyle = "#000000";
+    ctx.fillText(textLat, xPos + 30, yPos - 10);
+    ctx.fillText(textLng, xPos + 30, yPos + 10);
 
-    // ---Pasar al siguiente nivel ---
-    // Completamos el nivel en el estado global
-    window.EscapeRoomState.completeLevel(2, {
-      mapDrawn: true,
-      markedX: xMarker,
-      markedY: yMarker
-    });
+    isPositionMarked = true; 
 
-    // Habilitar botón de completar nivel
-    enableCompleteButton("complete-level2-btn");
+    if (window.EscapeRoomState) {
+      window.EscapeRoomState.completeLevel(2, { 
+        mapDrawn: true, 
+        positionMarked: true 
+      });
+    }
 
-    // Actualizamos la interfaz del botón para dar feedback
     const drawMapBtn = document.getElementById("draw-map-btn");
     if (drawMapBtn) {
       drawMapBtn.textContent = "Mapa y posición listos";
@@ -167,28 +162,6 @@
       drawMapBtn.disabled = true; 
     }
 
-    // Scrollear automáticamente al nivel 3
-    const levelThree = document.getElementById("level-3");
-    if (levelThree) {
-      setTimeout(() => {
-        levelThree.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 800);
-    }
-  }
-
-  function updateCheckItem(checkId, completed) {
-    const checkEl = document.getElementById(checkId);
-    if (checkEl) {
-      checkEl.textContent = completed ? "✓" : "○";
-      checkEl.className = completed ? "badge bg-success me-2" : "badge bg-secondary me-2";
-    }
-  }
-
-  function enableCompleteButton(buttonId) {
-    const btn = document.getElementById(buttonId);
-    if (btn) {
-      btn.disabled = false;
-      btn.classList.add("btn-success");
-    }
+    showLevelTwoMessage("¡Excelente! Mapa dibujado y coordenadas marcadas con precisión. Ya puedes marcar el nivel como completo.", "success");
   }
 })();
